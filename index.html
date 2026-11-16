@@ -58,7 +58,22 @@ img.pic{width:60px;height:60px;object-fit:cover;border-radius:50%}
 <div class="card"><h3>Admin / Head - 10 Tak</h3><input id="aName" placeholder="Admin / Head Naam"><input id="aBranch" placeholder="Branch"><input id="aPhone" placeholder="Number"><input id="aPin" placeholder="PIN - Khud Banao"><button class="btn2" onclick="addAdmin()">Admin Add Karo</button><p>View Mode: Dekh sakta hai, PIN ke baghair cher nahi sakta.</p><div id="adminList"></div></div>
 <div class="card" id="register"><h3>Monthly Register 📅</h3><p>Month select karo, poora register dekho, Print karo.</p></div>
 <div class="bottom"><button onclick="sendMsg('sms')">SMS ✉️</button><button onclick="sendMsg('whatsapp')">WhatsApp 💬</button><button onclick="location.href='tel:03003037168'">CALL 📞</button></div>
-<script src="app.js"></script>
+<script>
+function show(id){alert(id+' kholna hai')}
+function login(){alert('Login')}
+function editBranch(){alert('Branch Edit')}
+function pic(a,b){}
+function addStudent(){alert('Student Save')}
+function addTeacher(){alert('Teacher Save')}
+function sendMsg(t){if(t=='whatsapp')location.href='https://wa.me/923003037168';else location.href='sms:03003037168'}
+function resultFields(){}
+function makeResult(){alert('Result Bana')}
+function sendSalaryCode(){alert('Code Bheja')}
+function confirmSalary(){alert('Salary Confirm')}
+function clearC(id){var c=document.getElementById(id);c.getContext('2d').clearRect(0,0,c.width,c.height)}
+function printSalary(){window.print()}
+function addAdmin(){alert('Admin Add')}
+</script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js')}</script>
 </body>
 </html>
