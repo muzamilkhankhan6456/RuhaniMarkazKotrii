@@ -59,5 +59,6 @@ img.pic{width:60px;height:60px;object-fit:cover;border-radius:50%}
 <div class="card" id="register"><h3>Monthly Register 📅</h3><p>Month select karo, poora register dekho, Print karo.</p></div>
 <div class="bottom"><button onclick="sendMsg('sms')">SMS ✉️</button><button onclick="sendMsg('whatsapp')">WhatsApp 💬</button><button onclick="location.href='tel:03003037168'">CALL 📞</button></div>
 <script src="app.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js')}</script>
 </body>
 </html>
