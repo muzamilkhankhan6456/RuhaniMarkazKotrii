@@ -1,9 +1,11 @@
-const CACHE = 'ruhani-kotri-v3';
+const CACHE = 'ruhani-kotri-v5';
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE).then(async (c) => {
       await c.add('./index.html');
       await c.add('./manifest.json');
+      await c.add('./icon-192.png');
+      await c.add('./icon-512.png');
       await c.add('./');
     }).then(() => self.skipWaiting())
   );
