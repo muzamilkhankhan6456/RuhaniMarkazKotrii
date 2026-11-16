@@ -1,27 +1,21 @@
 {
   "name": "Ruhani Markaz Kotri",
   "short_name": "Ruhani Markaz",
-  "description": "Ruhani Markaz Kotri - Hazri Register, Salary aur Branch App",
-  "lang": "ur",
-  "dir": "rtl",
+  "description": "Ruhani Markaz Kotri - Masjid + Madrasa - Attendance, Students, Teachers, Salary, Result Card",
   "start_url": "./index.html",
-  "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
-  "theme_color": "#0a6b3c",
-  "background_color": "#ffffff",
+  "background_color": "#0b6b3a",
+  "theme_color": "#0b6b3a",
   "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ]
 }
