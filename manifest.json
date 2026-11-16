@@ -1,19 +1,13 @@
 {
   "name": "Ruhani Markaz Kotri",
   "short_name": "Ruhani Markaz",
-  "description": "Ruhani Markaz Kotri - Masjid + Madrasa - Attendance, Students, Teachers, Salary, Result Card",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0b6b3a",
   "theme_color": "#0b6b3a",
   "icons": [
     {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icon-512.png",
+      "src": "https://cdn-icons-png.flaticon.com/512/3130/3130609.png",
       "sizes": "512x512",
       "type": "image/png"
     }
