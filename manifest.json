@@ -1,20 +1,22 @@
 {
   "name": "Ruhani Markaz Kotri",
   "short_name": "Ruhani Markaz",
+  "description": "Ruhani Markaz Kotri - Attendance & Record System",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0b6b3a",
-  "theme_color": "#0b6b3a",
+  "background_color": "#0b6e4f",
+  "theme_color": "#0b6e4f",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "./icon-192.png",
-      "sizes": "192x192",
+      "src": "https://cdn-icons-png.flaticon.com/512/3602/3602145.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./icon-512.png",
-      "sizes": "512x512",
+      "src": "https://cdn-icons-png.flaticon.com/512/3602/3602145.png",
+      "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     }
