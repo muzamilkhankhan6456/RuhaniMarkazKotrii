@@ -4,66 +4,92 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ruhani Markaz Kotri</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b6e4f">
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
-*{box-sizing:border-box;font-family:Arial}body{margin:0;background:#f0f2f5;padding:12px}
-.header{background:#0b6e4f;color:#fff;padding:18px;border-radius:14px;text-align:center}
-.header h1{margin:0;font-size:22px}.header p{margin:5px 0 0;opacity:.9;font-size:13px}
-.card{background:#fff;padding:15px;border-radius:14px;margin-top:12px;box-shadow:0 2px 8px #0001}
-input,select,button{width:100%;padding:12px;margin-top:8px;border-radius:10px;border:1px solid #ddd;font-size:15px}
-button{background:#0b6e4f;color:#fff;border:none;font-weight:bold;cursor:pointer}
-.btn2{background:#25D366}.btn3{background:#ff9800}.btn4{background:#2196F3}
+*{box-sizing:border-box;font-family:Arial}body{margin:0;background:#f0f2f5;padding:0;padding-bottom:70px}
+.header{background:#0b6e4f;color:#fff;padding:15px;text-align:center}
+.header h1{margin:0;font-size:20px}.header p{margin:3px 0;font-size:13px}
+.loginBtn{background:#fff;color:#000;padding:6px 18px;border:none;border-radius:8px;font-weight:bold;margin-top:8px;cursor:pointer}
+.card{background:#fff;padding:14px;border-radius:12px;margin:10px;box-shadow:0 2px 8px #0001}
+label{font-size:13px;font-weight:bold;display:block;margin-top:10px}
+input,select{width:100%;padding:11px;margin-top:5px;border-radius:9px;border:1px solid #ddd;font-size:14px}
+.row{display:flex;gap:8px}.row>div{flex:1}
+.stats{display:flex;gap:8px;margin:10px}.stat{flex:1;background:#fff;padding:12px;border-radius:12px;text-align:center;box-shadow:0 2px 8px #0001}.stat b{font-size:20px;display:block}
+.btn{width:100%;padding:13px;border:none;border-radius:10px;color:#fff;font-weight:bold;font-size:15px;margin-top:8px;cursor:pointer;background:#0b6e4f}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;border-top:1px solid #ddd;padding:10px;gap:8px}.bottom button{flex:1;padding:10px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;background:#f0f0f0}
 .member{display:flex;justify-content:space-between;align-items:center;background:#f8f9fa;padding:10px;border-radius:10px;margin-top:8px}
-.badge{background:#e8f5e9;color:#0b6e4f;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:bold}
-.del{background:#ff5252;padding:6px 10px;width:auto;margin:0}
-.online{color:#0b6e4f;font-weight:bold;text-align:center;font-size:13px}
-.tab{display:flex;gap:8px}.tab button{background:#e0e0e0;color:#000}.tab button.active{background:#0b6e4f;color:#fff}
-.hazir{width:auto;padding:8px 14px;margin:0}.present{background:#0b6e4f}.absent{background:#ff5252}
+.hazir{width:auto;padding:8px 14px;margin:0;border:none;border-radius:8px;color:#fff;font-weight:bold;cursor:pointer}
+.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#0008;z-index:99;align-items:center;justify-content:center;padding:20px}.modalBox{background:#fff;width:100%;max-width:350px;padding:20px;border-radius:14px}
 table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}th,td{border:1px solid #ddd;padding:8px;text-align:center}th{background:#0b6e4f;color:#fff}
 </style>
 </head>
 <body>
-<div class="header"><h1>🕌 Ruhani Markaz Kotri</h1><p>Attendance & Record System - Live Database</p></div>
-<p class="online" id="status">● Connecting...</p>
-
-<div class="card tab">
-<button id="t1" class="active" onclick="showTab(1)">👥 Members</button>
-<button id="t2" onclick="showTab(2)">✅ Aaj Ki Hazri</button>
-<button id="t3" onclick="showTab(3)">📊 Report</button>
+<div class="header">
+<h1>🕌 Ruhani Markaz Kotri</h1>
+<p>Sarparast-e-Aala: Molana Zubair Ahmed Sheikh Sb</p>
+<p>Hafiz Salman<br>0300-3037168<br>0317-0880615</p>
+<p id="loginStatus">Login 🔐 Assistant - Full Control</p>
+<button class="loginBtn" id="loginBtn" onclick="openLogin()">Login / Logout</button>
 </div>
 
-<div id="tab1">
 <div class="card">
-<h3 style="margin:0">Naya Member Add Karein</h3>
+<label>Select Branch 🏛️</label>
+<select id="branch" onchange="saveBranch()"><option>Jama Masjid Maria wa Madrasa Arabia Gulshan E Zia Kotri</option><option>Ruhani Markaz Kotri - Main</option><option>Other Branch</option></select>
+<div class="row"><div><label>Masjid + Madrasa</label><input value="Masjid + Madrasa" readonly></div><div><label>&nbsp;</label><button class="btn" style="background:#ff9800" onclick="editBranch()">Branch Edit</button></div></div>
+<label>Date</label><input type="date" id="datePick">
+<label>Register Month</label><input type="month" id="monthPick">
+<label>Subject</label><select id="subject"><option>All Subjects</option><option>Quran</option><option>Urdu</option><option>English</option><option>Maths</option></select>
+</div>
+
+<div class="stats">
+<div class="stat">Students<b id="sCount">0</b></div>
+<div class="stat">Teachers<b id="tCount">0</b></div>
+<div class="stat">Salary Paid<b id="salCount">0</b></div>
+</div>
+
+<div class="grid">
+<button class="btn" onclick="showTab(2)">Attendance 📋</button>
+<button class="btn" style="background:#2196F3" onclick="showTab(1)">Students 👥</button>
+<button class="btn" style="background:#673AB7" onclick="showTab(1)">Teacher List</button>
+<button class="btn" style="background:#009688" onclick="showTab(2)">Teacher Attendance</button>
+</div>
+
+<div id="tab1" class="card">
+<h3 style="margin:0">Students / Members List (<span id="count">0</span>)</h3>
 <input id="name" placeholder="Naam likhein">
 <input id="phone" placeholder="Mobile Number">
-<select id="city"><option>Kotri</option><option>Hyderabad</option><option>Jamshoro</option><option>Karachi</option><option>Other</option></select>
-<button onclick="addMember()">+ Member Add Karein</button>
-</div>
-<div class="card">
-<h3 style="margin:0">Members List (<span id="count">0</span>)</h3>
-<input id="search" placeholder="Search karein..." oninput="render()">
+<button class="btn" onclick="addMember()">+ Student Add Karein</button>
+<input id="search" placeholder="Search karein..." oninput="render()" style="margin-top:12px">
 <div id="list"></div>
 </div>
-</div>
 
-<div id="tab2" style="display:none">
-<div class="card">
+<div id="tab2" class="card" style="display:none">
 <h3 style="margin:0">Aaj Ki Hazri - <span id="today"></span></h3>
-<p style="font-size:13px;color:#666">Present = Green, Absent = Red. Hazri khud save ho jayegi.</p>
 <p><b>Present: <span id="pCount">0</span> | Absent: <span id="aCount">0</span></b></p>
 <div id="hazriList"></div>
-<button class="btn2" onclick="sendWhatsApp()">📱 WhatsApp Par Hazri Bhejo</button>
-</div>
+<button class="btn" style="background:#25D366" onclick="sendWhatsApp()">📱 WhatsApp Par Hazri Bhejo</button>
+<button class="btn" style="background:#ff9800" onclick="sendReportWhatsApp()">📊 Monthly Report Bhejo</button>
+<div id="report" style="margin-top:10px"></div>
 </div>
 
-<div id="tab3" style="display:none">
-<div class="card">
-<h3 style="margin:0">Monthly Report</h3>
-<input type="month" id="monthPick" onchange="renderReport()">
-<div id="report"></div>
-<button class="btn3" onclick="sendReportWhatsApp()">📱 Report WhatsApp Par Bhejo</button>
+<div class="bottom">
+<button onclick="sendSMS()">SMS</button>
+<button style="background:#25D366;color:#fff" onclick="sendWhatsApp()">WhatsApp</button>
+<button onclick="makeCall()">CALL</button>
+</div>
+
+<div class="modal" id="loginModal">
+<div class="modalBox">
+<h3 style="margin:0">🔐 Login Karein</h3>
+<p style="font-size:13px;color:#666">Assistant Login - PIN: <b>1234</b></p>
+<input id="pinInput" type="password" placeholder="PIN likhein - 1234" inputmode="numeric">
+<button class="btn" onclick="doLogin()">Login</button>
+<button class="btn" style="background:#ddd;color:#000" onclick="closeLogin()">Band Karein</button>
+<p id="loginError" style="color:red;font-size:13px;display:none">Ghalat PIN! Dobara try karein</p>
 </div>
 </div>
 
@@ -82,67 +108,96 @@ const db = firebase.database().ref("members");
 const attRef = firebase.database().ref("attendance");
 let all = {}; let att = {};
 let todayKey = new Date().toISOString().slice(0,10);
+let isLoggedIn = localStorage.getItem("rmk_login") === "yes";
+document.getElementById("datePick").value = todayKey;
 document.getElementById("today").innerText = new Date().toLocaleDateString("en-PK");
 document.getElementById("monthPick").value = new Date().toISOString().slice(0,7);
-db.on("value", s=>{ all=s.val()||{}; document.getElementById("status").innerText="● Connected - Live Database"; render(); renderHazri(); renderReport(); });
+updateLoginUI();
+db.on("value", s=>{ all=s.val()||{}; render(); renderHazri(); renderReport(); });
 attRef.on("value", s=>{ att=s.val()||{}; renderHazri(); renderReport(); });
+
+function openLogin(){
+  if(isLoggedIn){
+    if(confirm("Logout karna hai?")){ isLoggedIn=false; localStorage.removeItem("rmk_login"); updateLoginUI(); }
+    return;
+  }
+  document.getElementById("loginModal").style.display="flex";
+  document.getElementById("pinInput").value="";
+  document.getElementById("loginError").style.display="none";
+}
+function closeLogin(){ document.getElementById("loginModal").style.display="none"; }
+function doLogin(){
+  let pin = document.getElementById("pinInput").value.trim();
+  if(pin === "1234"){
+    isLoggedIn = true;
+    localStorage.setItem("rmk_login","yes");
+    closeLogin();
+    updateLoginUI();
+    alert("Login ho gaya! Welcome Assistant ✅");
+  } else {
+    document.getElementById("loginError").style.display="block";
+  }
+}
+function updateLoginUI(){
+  if(isLoggedIn){
+    document.getElementById("loginStatus").innerText = "Login ✅ Assistant - Logged In";
+    document.getElementById("loginBtn").innerText = "Logout";
+  } else {
+    document.getElementById("loginStatus").innerText = "Login 🔐 Assistant - Full Control";
+    document.getElementById("loginBtn").innerText = "Login / Logout";
+  }
+}
+function saveBranch(){ localStorage.setItem("rmk_branch", document.getElementById("branch").value); }
+function editBranch(){ let b = prompt("Branch ka naam likhein:", document.getElementById("branch").value); if(b){ let opt=document.createElement("option"); opt.text=b; document.getElementById("branch").appendChild(opt); document.getElementById("branch").value=b; saveBranch(); } }
 function showTab(n){
   document.getElementById("tab1").style.display = n==1?"block":"none";
   document.getElementById("tab2").style.display = n==2?"block":"none";
-  document.getElementById("tab3").style.display = n==3?"block":"none";
-  ["t1","t2","t3"].forEach((id,i)=> document.getElementById(id).className = (i+1==n?"active":""));
 }
 function addMember(){
+  if(!isLoggedIn){ openLogin(); return; }
   const name=document.getElementById("name").value.trim();
   const phone=document.getElementById("phone").value.trim();
-  const city=document.getElementById("city").value;
   if(!name){alert("Naam likhein");return;}
-  db.push({name,phone,city,date:new Date().toLocaleDateString("en-PK")});
+  db.push({name:name,phone:phone,city:"Kotri",date:new Date().toLocaleDateString("en-PK")});
   document.getElementById("name").value=""; document.getElementById("phone").value="";
-  alert("Member save ho gaya ✅");
+  alert("Student save ho gaya ✅");
 }
-function delMember(id){ if(confirm("Delete karein?")) db.child(id).remove(); }
+function delMember(id){ if(!isLoggedIn){ openLogin(); return; } if(confirm("Delete karein?")) db.child(id).remove(); }
 function render(){
   const q=document.getElementById("search").value.toLowerCase();
   let html=""; let c=0;
-  for(let id in all){ let m=all[id]; if(m.name.toLowerCase().includes(q)){ c++; html+=`<div class="member"><div><b>${m.name}</b><br><small>${m.phone||""} - ${m.city} - ${m.date||""}</small></div><div><span class="badge">Active</span> <button class="del" onclick="delMember('${id}')">X</button></div></div>`; } }
+  for(let id in all){ let m=all[id]; if(m.name.toLowerCase().includes(q)){ c++; html+='<div class="member"><div><b>'+m.name+'</b><br><small>'+(m.phone||"")+' - '+(m.date||"")+'</small></div><button style="background:#ff5252;color:#fff;border:none;padding:6px 10px;border-radius:8px" onclick="delMember(\''+id+'\')">X</button></div>'; } }
   document.getElementById("count").innerText=c;
-  document.getElementById("list").innerHTML=html||"<p style='text-align:center;color:#888'>Abhi koi member nahi</p>";
+  document.getElementById("sCount").innerText=c;
+  document.getElementById("list").innerHTML = html || "<p style='text-align:center;color:#888'>Abhi koi student nahi</p>";
 }
-function toggleAtt(id, status){ attRef.child(todayKey).child(id).set(status); }
+function toggleAtt(id, status){ if(!isLoggedIn){ openLogin(); return; } attRef.child(todayKey).child(id).set(status); }
 function renderHazri(){
-  let html=""; let p=0,a=0;
-  let todayAtt = att[todayKey]||{};
-  for(let id in all){ let m=all[id]; let st=todayAtt[id];
-    if(st=="P") p++; else if(st=="A") a++;
-    html+=`<div class="member"><div><b>${m.name}</b><br><small>${st=="P"?"✅ Present":st=="A"?"❌ Absent":"⏳ Pending"}</small></div><div><button class="hazir present" onclick="toggleAtt('${id}','P')">P</button> <button class="hazir absent" onclick="toggleAtt('${id}','A')">A</button></div></div>`;
-  }
-  document.getElementById("hazriList").innerHTML=html||"Koi member nahi";
+  let html=""; let p=0,a=0; let todayAtt = att[todayKey]||{};
+  for(let id in all){ let m=all[id]; let st=todayAtt[id]; if(st=="P") p++; if(st=="A") a++; let label="⏳ Pending"; if(st=="P") label="✅ Present"; if(st=="A") label="❌ Absent"; html+='<div class="member"><div><b>'+m.name+'</b><br><small>'+label+'</small></div><div><button class="hazir" style="background:#0b6e4f" onclick="toggleAtt(\''+id+'\',\'P\')">P</button> <button class="hazir" style="background:#ff5252" onclick="toggleAtt(\''+id+'\',\'A\')">A</button></div></div>'; }
+  document.getElementById("hazriList").innerHTML = html || "Koi student nahi";
   document.getElementById("pCount").innerText=p; document.getElementById("aCount").innerText=a;
 }
 function renderReport(){
   let month=document.getElementById("monthPick").value;
   let html="<table><tr><th>Naam</th><th>Present</th><th>Absent</th><th>%</th></tr>";
-  for(let id in all){ let m=all[id]; let pres=0, abs=0;
-    for(let d in att){ if(d.startsWith(month)){ if(att[d][id]=="P") pres++; if(att[d][id]=="A") abs++; } }
-    let total=pres+abs; let per= total?Math.round(pres/total*100):0;
-    html+=`<tr><td>${m.name}</td><td>${pres}</td><td>${abs}</td><td>${per}%</td></tr>`;
-  }
-  html+="</table>";
-  document.getElementById("report").innerHTML=html;
+  for(let id in all){ let m=all[id]; let pres=0, abs=0; for(let d in att){ if(d.startsWith(month)){ if(att[d][id]=="P") pres++; if(att[d][id]=="A") abs++; } } let total=pres+abs; let per= total?Math.round(pres/total*100):0; html+="<tr><td>"+m.name+"</td><td>"+pres+"</td><td>"+abs+"</td><td>"+per+"%</td></tr>"; }
+  html+="</table>"; document.getElementById("report").innerHTML=html;
 }
 function sendWhatsApp(){
   let txt="🕌 *Ruhani Markaz Kotri - Hazri*%0A📅 "+new Date().toLocaleDateString("en-PK")+"%0A%0A";
   let todayAtt=att[todayKey]||{};
-  for(let id in all){ let s=todayAtt[id]=="P"?"✅ Present":todayAtt[id]=="A"?"❌ Absent":"⏳ -"; txt+= all[id].name+" - "+s+"%0A"; }
+  for(let id in all){ let s="⏳ -"; if(todayAtt[id]=="P") s="✅ Present"; if(todayAtt[id]=="A") s="❌ Absent"; txt+= all[id].name+" - "+s+"%0A"; }
   window.open("https://wa.me/?text="+txt);
 }
 function sendReportWhatsApp(){
   let month=document.getElementById("monthPick").value;
-  let txt="🕌 *Ruhani Markaz Kotri - Monthly Report "+month+"*%0A%0A";
+  let txt="🕌 *Ruhani Markaz Kotri - Report "+month+"*%0A%0A";
   for(let id in all){ let pres=0,abs=0; for(let d in att){ if(d.startsWith(month)){ if(att[d][id]=="P") pres++; if(att[d][id]=="A") abs++; } } txt+= all[id].name+" - P:"+pres+" A:"+abs+"%0A"; }
   window.open("https://wa.me/?text="+txt);
 }
+function sendSMS(){ alert("SMS feature - WhatsApp se bhejein"); }
+function makeCall(){ window.open("tel:03003037168"); }
 </script>
 </body>
 </html>
