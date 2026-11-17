@@ -4,76 +4,145 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ruhani Markaz Kotri</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0b6b3a">
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
-*{box-sizing:border-box;font-family:system-ui}body{margin:0;background:#eef6f0;padding-bottom:90px}
-.header{background:#0b6b3a;color:#fff;padding:14px;text-align:center;border-radius:0 0 18px 18px}
-.header h1{margin:0;font-size:22px}.header p{margin:4px 0;font-size:14px}
-.card{background:#fff;margin:10px;padding:12px;border-radius:14px;box-shadow:0 2px 8px #0001}
-.row{display:flex;gap:8px}.stat{flex:1;text-align:center;background:#f1f8f3;padding:10px;border-radius:12px}
-.stat b{font-size:20px;display:block}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.btn{background:#0b6b3a;color:#fff;border:0;padding:14px;border-radius:12px;font-size:15px}
-.btn2{background:#fff;color:#0b6b3a;border:1px solid #0b6b3a;padding:10px;border-radius:10px;width:100%;margin-top:6px}
-input,select,textarea{width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:10px}
-.bottom{position:fixed;bottom:0;left:0;right:0;display:flex;background:#fff;border-top:1px solid #ddd}
-.bottom button{flex:1;padding:14px;border:0;background:#fff;font-weight:700}
-canvas{border:1px dashed #888;width:100%;height:120px;background:#fff;border-radius:10px}
-img.pic{width:60px;height:60px;object-fit:cover;border-radius:50%}
+*{box-sizing:border-box;font-family:Arial}body{margin:0;background:#f0f2f5;padding:12px}
+.header{background:#0b6e4f;color:#fff;padding:18px;border-radius:14px;text-align:center}
+.header h1{margin:0;font-size:22px}.header p{margin:5px 0 0;opacity:.9;font-size:13px}
+.card{background:#fff;padding:15px;border-radius:14px;margin-top:12px;box-shadow:0 2px 8px #0001}
+input,select,button{width:100%;padding:12px;margin-top:8px;border-radius:10px;border:1px solid #ddd;font-size:15px}
+button{background:#0b6e4f;color:#fff;border:none;font-weight:bold;cursor:pointer}
+.btn2{background:#25D366}.btn3{background:#ff9800}.btn4{background:#2196F3}
+.member{display:flex;justify-content:space-between;align-items:center;background:#f8f9fa;padding:10px;border-radius:10px;margin-top:8px}
+.badge{background:#e8f5e9;color:#0b6e4f;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:bold}
+.del{background:#ff5252;padding:6px 10px;width:auto;margin:0}
+.online{color:#0b6e4f;font-weight:bold;text-align:center;font-size:13px}
+.tab{display:flex;gap:8px}.tab button{background:#e0e0e0;color:#000}.tab button.active{background:#0b6e4f;color:#fff}
+.hazir{width:auto;padding:8px 14px;margin:0}.present{background:#0b6e4f}.absent{background:#ff5252}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}th,td{border:1px solid #ddd;padding:8px;text-align:center}th{background:#0b6e4f;color:#fff}
 </style>
 </head>
 <body>
-<div class="header">
-<h1>🕌 Ruhani Markaz Kotri</h1>
-<p><b>Sarparast-e-Aala: Molana Zubair Ahmed Sheikh Sb</b><br>📞 <a href="tel:03003037168" style="color:#fff">0300-3037168</a></p>
-<p><b>Hafiz Salman</b><br>📞 <a href="tel:03170880615" style="color:#fff">0317-0880615</a></p>
-<p>Login 🔐 : Assistant - Full Control</p>
-<button onclick="login()">Login / Logout</button>
+<div class="header"><h1>🕌 Ruhani Markaz Kotri</h1><p>Attendance & Record System - Live Database</p></div>
+<p class="online" id="status">● Connecting...</p>
+
+<div class="card tab">
+<button id="t1" class="active" onclick="showTab(1)">👥 Members</button>
+<button id="t2" onclick="showTab(2)">✅ Aaj Ki Hazri</button>
+<button id="t3" onclick="showTab(3)">📊 Report</button>
+</div>
+
+<div id="tab1">
+<div class="card">
+<h3 style="margin:0">Naya Member Add Karein</h3>
+<input id="name" placeholder="Naam likhein">
+<input id="phone" placeholder="Mobile Number">
+<select id="city"><option>Kotri</option><option>Hyderabad</option><option>Jamshoro</option><option>Karachi</option><option>Other</option></select>
+<button onclick="addMember()">+ Member Add Karein</button>
 </div>
 <div class="card">
-<label>Select Branch 🏛️</label>
-<select id="branch"><option>Jama Masjid Maria wa Madrasa Arabia Gulshan E Zubair</option><option>Branch 2 - Add Karo</option><option>Branch 3 - Add Karo</option></select>
-<p>Masjid 🕌 + Madrasa 📗 | <button onclick="editBranch()">Branch Edit</button></p>
-<label>Date</label><input type="date" value="2026-11-16">
-<label>Register Month</label><input type="month" value="2026-11">
-<label>Subject</label><select><option>All Subjects</option><option>Hifz</option><option>Nazra</option><option>Darse Nizami Banat</option></select>
+<h3 style="margin:0">Members List (<span id="count">0</span>)</h3>
+<input id="search" placeholder="Search karein..." oninput="render()">
+<div id="list"></div>
 </div>
-<div class="card row"><div class="stat">Students<b id="cStd">1</b></div><div class="stat">Teachers<b id="cTch">0</b></div><div class="stat">Salary Paid<b id="cSal">0</b></div></div>
-<div class="card grid">
-<button class="btn" onclick="show('attendance')">Attendance 📗</button>
-<button class="btn" onclick="show('students')">Students 👦</button>
-<button class="btn" onclick="show('teachers')">Teacher List 👨‍🏫</button>
-<button class="btn" onclick="show('tatt')">Teacher Attendance 📘</button>
-<button class="btn" onclick="show('salary')">Salary 💰</button>
-<button class="btn" onclick="show('add')">Add ➕</button>
-<button class="btn" onclick="show('branches')">Branches 🏛️</button>
-<button class="btn" onclick="show('register')">Monthly Register 📅</button>
 </div>
-<div class="card" id="students"><h3>Students 👦</h3><input id="sName" placeholder="Student Naam"><input id="sFather" placeholder="Walid Ka Number"><input type="file" accept="image/*" onchange="pic(this,'sPic')"><img id="sPic" class="pic"><select id="sType"><option>Hifz</option><option>Nazra</option><option>Darse Nizami Banat</option></select><button class="btn2" onclick="addStudent()">Student Save Karo</button><div id="stdList"></div></div>
-<div class="card" id="teachers"><h3>Teacher List - 50 Ustad Tak</h3><input id="tName" placeholder="Ustad Naam"><input id="tPhone" placeholder="Ustad Mobile - Agar Hai To"><select id="tMobileType"><option>Touch Mobile</option><option>Button Wala Mobile</option><option>Mobile Nahi Hai</option></select><input id="tPin" placeholder="Ustad Ka Code - 4 Digit"><button class="btn2" onclick="addTeacher()">Teacher Save Karo</button><div id="tchList"></div></div>
-<div class="card" id="attendance"><h3>Attendance 📗 + Ghair Hazri / Shikayat</h3><textarea id="complaint" placeholder="Ghair Hazri / Shikayat yahan khud likhen..."></textarea><button class="btn2" onclick="sendMsg('whatsapp')">WhatsApp Par Bhejo 💬</button><button class="btn2" onclick="sendMsg('sms')">SMS Par Bhejo ✉️</button></div>
-<div class="card"><h3>Result Card - 3 Alag</h3><select id="rType" onchange="resultFields()"><option>Hifz</option><option>Nazra</option><option>Darse Nizami Banat</option></select><div id="rFields"></div><textarea id="rRemarks" placeholder="Ustad Remarks..."></textarea><button class="btn2" onclick="makeResult()">Result Card Banao + WhatsApp / Print</button><div id="resultOut"></div></div>
-<div class="card" id="salary"><h3>Salary 💰 + Sign ✍️</h3><input id="salName" placeholder="Ustad Naam"><input id="salAmt" type="number" placeholder="Salary - 15000"><input id="salMonth" placeholder="Mahina - November 2026"><input id="salAdv" type="number" placeholder="Advance"><input id="salDue" type="number" placeholder="Baqaya"><button class="btn2" onclick="sendSalaryCode()">Code Bhejo - Touch / Button Wale Ko</button><input id="enterCode" placeholder="Ustad Ka Code Daalo"><button class="btn2" onclick="confirmSalary()">YES ✅ - Naam Se Sign Ho Jayega</button><p><b>Button Wala:</b> SMS par YES likh kar bheje. <b>Mobile Nahi Wala:</b> Head ke mobile par sign.</p><p>Ustad Sign:</p><canvas id="c1"></canvas><button onclick="clearC('c1')">Saaf Karo</button><p>Head Sign:</p><canvas id="c2"></canvas><button onclick="clearC('c2')">Saaf Karo</button><button class="btn2" onclick="printSalary()">Raseed Print / WhatsApp</button><div id="salOut"></div></div>
-<div class="card"><h3>Admin / Head - 10 Tak</h3><input id="aName" placeholder="Admin / Head Naam"><input id="aBranch" placeholder="Branch"><input id="aPhone" placeholder="Number"><input id="aPin" placeholder="PIN - Khud Banao"><button class="btn2" onclick="addAdmin()">Admin Add Karo</button><p>View Mode: Dekh sakta hai, PIN ke baghair cher nahi sakta.</p><div id="adminList"></div></div>
-<div class="card" id="register"><h3>Monthly Register 📅</h3><p>Month select karo, poora register dekho, Print karo.</p></div>
-<div class="bottom"><button onclick="sendMsg('sms')">SMS ✉️</button><button onclick="sendMsg('whatsapp')">WhatsApp 💬</button><button onclick="location.href='tel:03003037168'">CALL 📞</button></div>
+
+<div id="tab2" style="display:none">
+<div class="card">
+<h3 style="margin:0">Aaj Ki Hazri - <span id="today"></span></h3>
+<p style="font-size:13px;color:#666">Present = Green, Absent = Red. Hazri khud save ho jayegi.</p>
+<p><b>Present: <span id="pCount">0</span> | Absent: <span id="aCount">0</span></b></p>
+<div id="hazriList"></div>
+<button class="btn2" onclick="sendWhatsApp()">📱 WhatsApp Par Hazri Bhejo</button>
+</div>
+</div>
+
+<div id="tab3" style="display:none">
+<div class="card">
+<h3 style="margin:0">Monthly Report</h3>
+<input type="month" id="monthPick" onchange="renderReport()">
+<div id="report"></div>
+<button class="btn3" onclick="sendReportWhatsApp()">📱 Report WhatsApp Par Bhejo</button>
+</div>
+</div>
+
 <script>
-function show(id){alert(id+' kholna hai')}
-function login(){alert('Login')}
-function editBranch(){alert('Branch Edit')}
-function pic(a,b){}
-function addStudent(){alert('Student Save')}
-function addTeacher(){alert('Teacher Save')}
-function sendMsg(t){if(t=='whatsapp')location.href='https://wa.me/923003037168';else location.href='sms:03003037168'}
-function resultFields(){}
-function makeResult(){alert('Result Bana')}
-function sendSalaryCode(){alert('Code Bheja')}
-function confirmSalary(){alert('Salary Confirm')}
-function clearC(id){var c=document.getElementById(id);c.getContext('2d').clearRect(0,0,c.width,c.height)}
-function printSalary(){window.print()}
-function addAdmin(){alert('Admin Add')}
+const firebaseConfig = {
+  apiKey: "AIzaSyCm6fpmntJmEiP0POM4Xi829CIu8Gni8Pw",
+  authDomain: "ruhanimarkazkotri.firebaseapp.com",
+  databaseURL: "https://ruhanimarkazkotri-default-rtdb.firebaseio.com/",
+  projectId: "ruhanimarkazkotri",
+  storageBucket: "ruhanimarkazkotri.firebasestorage.app",
+  messagingSenderId: "906148918722",
+  appId: "1:906148918722:web:d6c78aff570d9a3f67925b"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database().ref("members");
+const attRef = firebase.database().ref("attendance");
+let all = {}; let att = {};
+let todayKey = new Date().toISOString().slice(0,10);
+document.getElementById("today").innerText = new Date().toLocaleDateString("en-PK");
+document.getElementById("monthPick").value = new Date().toISOString().slice(0,7);
+db.on("value", s=>{ all=s.val()||{}; document.getElementById("status").innerText="● Connected - Live Database"; render(); renderHazri(); renderReport(); });
+attRef.on("value", s=>{ att=s.val()||{}; renderHazri(); renderReport(); });
+function showTab(n){
+  document.getElementById("tab1").style.display = n==1?"block":"none";
+  document.getElementById("tab2").style.display = n==2?"block":"none";
+  document.getElementById("tab3").style.display = n==3?"block":"none";
+  ["t1","t2","t3"].forEach((id,i)=> document.getElementById(id).className = (i+1==n?"active":""));
+}
+function addMember(){
+  const name=document.getElementById("name").value.trim();
+  const phone=document.getElementById("phone").value.trim();
+  const city=document.getElementById("city").value;
+  if(!name){alert("Naam likhein");return;}
+  db.push({name,phone,city,date:new Date().toLocaleDateString("en-PK")});
+  document.getElementById("name").value=""; document.getElementById("phone").value="";
+  alert("Member save ho gaya ✅");
+}
+function delMember(id){ if(confirm("Delete karein?")) db.child(id).remove(); }
+function render(){
+  const q=document.getElementById("search").value.toLowerCase();
+  let html=""; let c=0;
+  for(let id in all){ let m=all[id]; if(m.name.toLowerCase().includes(q)){ c++; html+=`<div class="member"><div><b>${m.name}</b><br><small>${m.phone||""} - ${m.city} - ${m.date||""}</small></div><div><span class="badge">Active</span> <button class="del" onclick="delMember('${id}')">X</button></div></div>`; } }
+  document.getElementById("count").innerText=c;
+  document.getElementById("list").innerHTML=html||"<p style='text-align:center;color:#888'>Abhi koi member nahi</p>";
+}
+function toggleAtt(id, status){ attRef.child(todayKey).child(id).set(status); }
+function renderHazri(){
+  let html=""; let p=0,a=0;
+  let todayAtt = att[todayKey]||{};
+  for(let id in all){ let m=all[id]; let st=todayAtt[id];
+    if(st=="P") p++; else if(st=="A") a++;
+    html+=`<div class="member"><div><b>${m.name}</b><br><small>${st=="P"?"✅ Present":st=="A"?"❌ Absent":"⏳ Pending"}</small></div><div><button class="hazir present" onclick="toggleAtt('${id}','P')">P</button> <button class="hazir absent" onclick="toggleAtt('${id}','A')">A</button></div></div>`;
+  }
+  document.getElementById("hazriList").innerHTML=html||"Koi member nahi";
+  document.getElementById("pCount").innerText=p; document.getElementById("aCount").innerText=a;
+}
+function renderReport(){
+  let month=document.getElementById("monthPick").value;
+  let html="<table><tr><th>Naam</th><th>Present</th><th>Absent</th><th>%</th></tr>";
+  for(let id in all){ let m=all[id]; let pres=0, abs=0;
+    for(let d in att){ if(d.startsWith(month)){ if(att[d][id]=="P") pres++; if(att[d][id]=="A") abs++; } }
+    let total=pres+abs; let per= total?Math.round(pres/total*100):0;
+    html+=`<tr><td>${m.name}</td><td>${pres}</td><td>${abs}</td><td>${per}%</td></tr>`;
+  }
+  html+="</table>";
+  document.getElementById("report").innerHTML=html;
+}
+function sendWhatsApp(){
+  let txt="🕌 *Ruhani Markaz Kotri - Hazri*%0A📅 "+new Date().toLocaleDateString("en-PK")+"%0A%0A";
+  let todayAtt=att[todayKey]||{};
+  for(let id in all){ let s=todayAtt[id]=="P"?"✅ Present":todayAtt[id]=="A"?"❌ Absent":"⏳ -"; txt+= all[id].name+" - "+s+"%0A"; }
+  window.open("https://wa.me/?text="+txt);
+}
+function sendReportWhatsApp(){
+  let month=document.getElementById("monthPick").value;
+  let txt="🕌 *Ruhani Markaz Kotri - Monthly Report "+month+"*%0A%0A";
+  for(let id in all){ let pres=0,abs=0; for(let d in att){ if(d.startsWith(month)){ if(att[d][id]=="P") pres++; if(att[d][id]=="A") abs++; } } txt+= all[id].name+" - P:"+pres+" A:"+abs+"%0A"; }
+  window.open("https://wa.me/?text="+txt);
+}
 </script>
-<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js')}</script>
 </body>
 </html>
